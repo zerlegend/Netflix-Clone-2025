@@ -1,1 +1,1 @@
-netflix clone project
+Netflix clone project
