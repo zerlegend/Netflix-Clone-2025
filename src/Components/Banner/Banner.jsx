@@ -3,7 +3,7 @@ import requests from "../../utils/requests";
 import { useState,  useEffect} from "react";
 import "./Banner.css";
 
-function Banner() {
+const Banner = () => {
   const [movie, setMovie] = useState({});
   useEffect(() => {
     (async () => {
