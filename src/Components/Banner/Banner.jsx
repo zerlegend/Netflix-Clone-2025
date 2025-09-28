@@ -1,30 +1,46 @@
 import axios from "../../utils/axios";
 import requests from "../../utils/requests";
-import { useState,  useEffect} from "react";
+import { useState, useEffect } from "react";
 import "./Banner.css";
 
 const Banner = () => {
   const [movie, setMovie] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     (async () => {
       try {
         const request = await axios.get(requests.fetchNetflixOriginals);
-        // console.log(request)
-        setMovie(request.data.results[Math.floor(Math.random()*request.data.results.length)]);
-      } catch (error) {
-        console.log("error", error);
+        const results = request.data.results;
+        if (results && results.length > 0) {
+          setMovie(results[Math.floor(Math.random() * results.length)]);
+        }
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load banner.");
+        setLoading(false);
       }
-    })()
+    })();
   }, []);
+
   function truncate(str, n) {
-    return str?.length > n ? str.substr(0, n *1) + '...' : str;
+    return str?.length > n ? str.substring(0, n) + "..." : str;
   }
+
+  if (loading) return <div className="banner">Loading...</div>;
+  if (error) return <div className="banner">{error}</div>;
+
+  const backdropUrl = movie?.backdrop_path
+    ? `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`
+    : undefined;
+
   return (
     <div
       className="banner"
       style={{
         backgroundSize: "cover",
-        backgroundImage: `url('https://image.tmdb.org/t/p/original${movie?.backdrop_path}')`,
+        backgroundImage: backdropUrl,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
@@ -42,6 +58,6 @@ const Banner = () => {
       <div className="banner_fadeBottom" />
     </div>
   );
-}
+};
 
 export default Banner;
